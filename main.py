@@ -6,13 +6,10 @@ def login():
     return praw.Reddit("nthsubbot")
 
 
-
-
-
 if __name__ == '__main__':
     # log in
     reddit = login()
     # read the database
     db = db.DB("db.csv")
-    # print contents
-    db.print_contents()
+    # get 80th subreddit
+    print(db.get_nth_subs(80))
