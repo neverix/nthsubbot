@@ -1,15 +1,18 @@
 import praw  # reddit API
-import pandas as pd  # working with tables
+import db  # database access
 
 
 def login():
     return praw.Reddit("nthsubbot")
 
 
+
+
+
 if __name__ == '__main__':
     # log in
     reddit = login()
     # read the database
-    db = pd.read_csv("db.csv")
-    # print the database
-    print(db)
+    db = db.DB("db.csv")
+    # print contents
+    db.print_contents()
