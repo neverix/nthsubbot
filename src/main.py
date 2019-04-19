@@ -1,6 +1,5 @@
-import bot  # communication with the bot
-import db  # database access
-
+import bot
+import db
 
 if __name__ == '__main__':
     # create a bot
