@@ -3,7 +3,7 @@ This is a bot for the Nth subs network.
 
 ## Using
 
-Clone this repo, install praw and pandas using pip and configure it.
+Clone this repo and install the dependencies by running `pip install -r requirements.txt`.
 Then you can simply run `main.py`.
 
 ## Credits
