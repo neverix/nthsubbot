@@ -6,3 +6,7 @@ class Reddit:
     # log in
     def __init__(self, login_args):
         self.reddit = praw.Reddit(**login_args)
+
+    # get moderators of a subreddit
+    def get_mods(self, subreddit):
+        return [mod.name for mod in self.reddit.subreddit(subreddit).moderator()]

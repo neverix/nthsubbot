@@ -53,5 +53,5 @@ if __name__ == '__main__':
     config.Config.save(conf)
     # create reddit API instance
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
-    # test
-    print(reddit.reddit.user.me())
+    # get mods of r/eightiethsub
+    print(reddit.get_mods("eightiethsub"))
