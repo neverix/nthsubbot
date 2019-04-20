@@ -1,6 +1,8 @@
 import praw
 
 
+# reddit API access
 class Reddit:
-    def __init__(self, name):
-        self.reddit = praw.Reddit(name)
+    # log in
+    def __init__(self, login_args):
+        self.reddit = praw.Reddit(**login_args)
