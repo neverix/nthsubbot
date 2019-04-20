@@ -1,5 +1,6 @@
 import config
 import reddit
+import db
 
 if __name__ == '__main__':
     # read config
@@ -53,5 +54,7 @@ if __name__ == '__main__':
     config.Config.save(conf)
     # create reddit API instance
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
-    # get mods of r/eightiethsub
-    print(reddit.get_mods("eightiethsub"))
+    # create database
+    db = db.DB(conf["db"]["path"])
+    # save database
+    db.save()
