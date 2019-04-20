@@ -1,6 +1,6 @@
 import praw
 
 
-class Bot:
+class Reddit:
     def __init__(self, name):
         self.reddit = praw.Reddit(name)
