@@ -54,7 +54,7 @@ if __name__ == '__main__':
     config.Config.save(conf)
     # create reddit API instance
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
+    # remove all comments and posts
+    reddit.remove_all()
     # create database
     db = db.DB(conf["db"]["path"])
-    # remove the reddit.com part of the subreddit column
-    db.rm_url()
