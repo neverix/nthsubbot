@@ -56,7 +56,5 @@ if __name__ == '__main__':
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
     # create database
     db = db.DB(conf["db"]["path"])
-    # get all subs with tag #thirdsub
-    print(db.search_nth_subs(
-        tags=["thirdsub"]
-    ))
+    # unduckup database
+    db.unduckup()
