@@ -1,6 +1,5 @@
 import sqlite3  # working with tables
 import csv  # exporting to CSV
-import pprint
 
 
 # Nth sub database
@@ -43,35 +42,6 @@ class DB:
         # close connection
         self.connection.close()
 
-    # repair my broken database :(
-    def unduckup(self):
-        # get second cursor
-        db2 = self.connection.cursor()
-
-        # magic fixer
-        def fix(tag: str):
-            return (tag
-                    .replace("eta", "meta")
-                    .replace("hirdsub", "thirdsub")
-                    .replace("ucktthirdsub", "fuckthirdsub")
-                    .replace("inussub", "minussub")
-                    .replace("lternativespelling", "alternativespelling")
-                    .replace("arge_number", "large_number")
-                    .replace("isspelled", "misspelled")
-                    .replace("athematical", "mathematical")
-                    .replace("thsub", "nthsub")
-                    .replace("onnumerical", "nonnumerical")
-                    .replace("hirdsub_alliance", "thirdsub_alliance"))
-        # loop over all rows
-        for (rowid, tags) in db2.execute("SELECT ROWID, Tag FROM database"):
-            # fix them
-            self.db.execute("UPDATE database SET Tag = ? WHERE ROWID = ?",
-                            (' '.join([fix(tag) for tag in tags.split(' ')]), rowid))
-        # close second cursor
-        db2.close()
-        # commit
-        self.connection.commit()
-
     # search nthsubs
     def search_nth_subs(self, number_gt=None, number_lt=None, number_eq=None, tags=None):
         # arguments handling
@@ -93,7 +63,7 @@ class DB:
             args.append(number_lt)
         if number_eq is not None:
             args.append(number_eq)
-        args += [f'%{tag}%' for tag in tags]
+        args += [f'% {tag} %' for tag in tags]
         # execute it
         self.db.execute(query, args)
         # return results
