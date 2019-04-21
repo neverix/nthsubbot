@@ -58,3 +58,7 @@ if __name__ == '__main__':
     reddit.remove_all()
     # create database
     db = db.DB(conf["db"]["path"])
+    # reformat tags
+    db.reformat_tags()
+    # save to csv
+    db.to_csv("db.csv")

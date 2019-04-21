@@ -36,14 +36,15 @@ class DB:
                 # write each row
                 csv_writer.writerow(row)
 
-    # remove the https;//www.reddit.com/r/ part
-    def rm_url(self):
+    # change tag formatting
+    def reformat_tags(self):
         # open second cursor
         db2 = self.connection.cursor()
-        # iterate over URLs
-        for (rowid, url) in db2.execute("SELECT ROWID, Subreddit FROM database"):
-            # update the subreddit column
-            self.db.execute("UPDATE database SET Subreddit = ? WHERE ROWID = ?", (get_subreddit(url), rowid))
+        # iterate over tags
+        for (rowid, tags) in db2.execute("SELECT ROWID, Tag FROM database"):
+            # update the tag column
+            self.db.execute("UPDATE database SET Tag = ? WHERE ROWID = ?",
+                            (' '.join([tag[1:] for tag in tags.split(' ')]), rowid))
         # close second cursor
         db2.close()
         # commit
