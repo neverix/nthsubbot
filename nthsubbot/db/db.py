@@ -36,26 +36,39 @@ class DB:
                 # write each row
                 csv_writer.writerow(row)
 
-    # change tag formatting
-    def reformat_tags(self):
-        # open second cursor
-        db2 = self.connection.cursor()
-        # iterate over tags
-        for (rowid, tags) in db2.execute("SELECT ROWID, Tag FROM database"):
-            # update the tag column
-            self.db.execute("UPDATE database SET Tag = ? WHERE ROWID = ?",
-                            (' '.join([tag[1:] for tag in tags.split(' ')]), rowid))
-        # close second cursor
-        db2.close()
-        # commit
-        self.connection.commit()
-
     # destructor
     def __del__(self):
         # close cursor
         self.db.close()
         # close connection
         self.connection.close()
+
+    # search nthsubs
+    def search_nth_subs(self, number_gt=None, number_lt=None, number_eq=None, tags=None):
+        # arguments handling
+        if tags is None:
+            tags = []
+        # create super complex query
+        query = f"""
+        SELECT * FROM database
+        WHERE Number LIKE '%%'
+        {' AND Number > ?' if number_gt is not None else ''}
+        {' AND Number < ?' if number_lt is not None else ''}
+        {' AND Number = ?' if number_eq is not None else ''}
+        {' AND Tag LIKE ?' * len(tags)}"""
+        # create super complex arguments
+        args = []
+        if number_gt is not None:
+            args.append(number_gt)
+        if number_lt is not None:
+            args.append(number_lt)
+        if number_eq is not None:
+            args.append(number_eq)
+        args += [f'%{tag}%' for tag in tags]
+        # execute it
+        self.db.execute(query, args)
+        # return results
+        return self.db.fetchall()
 
 
 # get the subreddit part after r/ but before the /

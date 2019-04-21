@@ -54,11 +54,9 @@ if __name__ == '__main__':
     config.Config.save(conf)
     # create reddit API instance
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
-    # remove all comments and posts
-    reddit.remove_all()
     # create database
     db = db.DB(conf["db"]["path"])
-    # reformat tags
-    db.reformat_tags()
-    # save to csv
-    db.to_csv("db.csv")
+    # get all subs with tag #thirdsub
+    print(db.search_nth_subs(
+        tags=["thirdsub"]
+    ))
