@@ -1,5 +1,6 @@
 import sqlite3  # working with tables
 import csv  # exporting to CSV
+from .nthsub import NthSub
 
 
 # Nth sub database
@@ -11,14 +12,7 @@ class DB:
 
     # print contents of database
     def print_contents(self):
-        print('\n'.join(str(row) for row in self.db.execute("SELECT * FROM database LIMIT 10").fetchall()))
-
-    # find subreddit names by number
-    def get_nth_subs(self, number):
-        # get the part after r/ but before the / for all subs with that number
-        return [
-            get_subreddit(url) for (url,) in
-            self.db.execute("SELECT Subreddit FROM database WHERE Number = ?", number).fetchall()]
+        print('\n'.join(','.join(row) for row in self.db.execute("SELECT * FROM database LIMIT 50").fetchall()))
 
     # convert database to CSV
     def to_csv(self, output_path):
@@ -67,9 +61,10 @@ class DB:
         # execute it
         self.db.execute(query, args)
         # return results
-        return self.db.fetchall()
+        return map(nthsub_from_record, self.db)
 
 
-# get the subreddit part after r/ but before the /
-def get_subreddit(url):
-    return url.split("r/")[1].split("/")[0]
+# create an nthsub from a DB record
+def nthsub_from_record(record):
+    return NthSub(record[0][1:-1].split(' '), record[2], record[1])
+

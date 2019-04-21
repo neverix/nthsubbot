@@ -56,10 +56,8 @@ if __name__ == '__main__':
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
     # create database
     db = db.DB(conf["db"]["path"])
-    # fix up spacing
-    db.insert_spacing()
     # search for nth subs
     print('\n'.join(str(row) for row in db.search_nth_subs(
-        number_gt=0,
+        number_eq=80,
         tags=["thirdsub"]
     )))
