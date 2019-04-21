@@ -56,8 +56,7 @@ if __name__ == '__main__':
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
     # create database
     db = db.DB(conf["db"]["path"])
-    # search for nth subs
-    print('\n'.join(str(row) for row in db.search_nth_subs(
-        number_eq=80,
-        tags=["thirdsub"]
-    )))
+    # post to 80th sub
+    reddit.post("eightiethsub", "Sub Ladder", "test")
+    # edit it
+    reddit.edit([("eightiethsub", "antitest")])
