@@ -56,7 +56,8 @@ if __name__ == '__main__':
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
     # create database
     db = db.DB(conf["db"]["path"])
+    # remove all posts
+    reddit.remove_all()
     # post to 80th sub
-    reddit.post("eightiethsub", "Sub Ladder", "test")
-    # edit it
-    reddit.edit([("eightiethsub", "antitest")])
+    print(reddit.post_or_edit({"eightiethsub": ("Super lame", "    test")}))
+    print(reddit.post_or_edit({"eightiethsub": ("Super lame", "antitest")}))

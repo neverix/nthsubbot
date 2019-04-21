@@ -1,7 +1,7 @@
 """ Reddit API access. """
 
 import praw
-from typing import Iterator, Tuple
+from typing import Tuple, Dict
 
 
 class Reddit:
@@ -24,28 +24,34 @@ class Reddit:
         for post in me.submissions.new():
             post.delete()
 
-    def post(self, subreddit: str, title: str, text: str):
+    def post_or_edit(self, subreddits_posts: Dict[str, Tuple[str, str]]) -> Dict[str, str]:
         """
-        Makes the initial post to a subreddit.
-        :param subreddit: subreddit to post it
-        :param title: title of the post
-        :param text: text of the post
+        Create or edit a submission to particular subreddits.
+        :param subreddits_posts: mapping from subreddit to title and text of the post
+        :return: the links to the posts
         """
-        # get the sub
-        sub = self.reddit.subreddit(subreddit)
-        # post to the sub
-        sub.submit(title, text)
-
-    def edit(self, subreddits_new_texts: Iterator[Tuple[str, str]]):
-        """
-        Edit the newest submission of the user to the subreddit
-        :param subreddits_new_texts: iterator of pairs (subreddit, new text for the post)
-        """
-        # loop over all posts
+        # links to the posts
+        links = {}
+        # subs that didn't get edited
+        subs_left = list(subreddits_posts.keys())
+        # loop over posts
         for post in self.reddit.user.me().submissions.new():
-            # loop over possible subreddits
-            for subreddit, new_text in subreddits_new_texts:
-                # check if the post is from that subreddit
-                if str(post.subreddit) == subreddit:
-                    # edit the post
-                    post.edit(new_text)
+            # loop over subs
+            for subreddit, (title, text) in subreddits_posts.items():
+                # check if it's the post that we are looking for
+                if post.subreddit.display_name == subreddit:
+                    # edit it
+                    post.edit(text)
+                    # remove from the ones that didn't get edited
+                    subs_left.remove(subreddit)
+                    # add the link
+                    links[subreddit] = post.url
+        # loop over other subs
+        for subreddit in subs_left:
+            # get the title and text
+            title, text = subreddits_posts[subreddit]
+            # submit post
+            post = self.reddit.subreddit(subreddit).submit(title, text)
+            # add the link
+            links[subreddit] = post.url
+        return links
