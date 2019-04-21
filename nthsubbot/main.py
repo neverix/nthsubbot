@@ -56,9 +56,5 @@ if __name__ == '__main__':
     reddit = reddit.Reddit(conf["reddit"]["login_args"])
     # create database
     db = db.DB(conf["db"]["path"])
-    # print database contents
-    db.print_contents()
-    # get 80th sub name
-    print(db.get_nth_subs(80))
-    # convert to CSV
-    db.to_csv("db.csv")
+    # remove the reddit.com part of the subreddit column
+    db.rm_url()

@@ -1,5 +1,6 @@
 import sqlite3  # working with tables
 import csv  # exporting to CSV
+import pprint
 
 
 # Nth sub database
@@ -34,6 +35,19 @@ class DB:
             for row in self.db:
                 # write each row
                 csv_writer.writerow(row)
+
+    # remove the https;//www.reddit.com/r/ part
+    def rm_url(self):
+        # open second cursor
+        db2 = self.connection.cursor()
+        # iterate over URLs
+        for (rowid, url) in db2.execute("SELECT ROWID, Subreddit FROM database"):
+            # update the subreddit column
+            self.db.execute("UPDATE database SET Subreddit = ? WHERE ROWID = ?", (get_subreddit(url), rowid))
+        # close second cursor
+        db2.close()
+        # commit
+        self.connection.commit()
 
     # destructor
     def __del__(self):
