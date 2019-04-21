@@ -1,21 +1,32 @@
-import sqlite3  # working with tables
-import csv  # exporting to CSV
+"""
+SQLite database operations.
+"""
+
+import sqlite3
+import csv
+from typing import Tuple, Iterator, List, Optional
 from .nthsub import NthSub
 
 
-# Nth sub database
 class DB:
-    # read database
-    def __init__(self, path):
+    """ Nth sub database. """
+    def __init__(self, path: str):
+        """
+        Opens the database.
+        :param path: the path of the SQLite database file.
+        """
         self.connection = sqlite3.connect(path)
         self.db = self.connection.cursor()
 
-    # print contents of database
     def print_contents(self):
+        """ Prints contents of the database. """
         print('\n'.join(','.join(row) for row in self.db.execute("SELECT * FROM database LIMIT 50").fetchall()))
 
-    # convert database to CSV
-    def to_csv(self, output_path):
+    def to_csv(self, output_path: str):
+        """
+        Converts the database to CSV.
+        :param output_path: the path of the output CSV file.
+        """
         # open CSV file
         with open(output_path, 'w') as csv_file:
             # create a CSV writer
@@ -29,15 +40,26 @@ class DB:
                 # write each row
                 csv_writer.writerow(row)
 
-    # destructor
     def __del__(self):
+        """ Destructor, closes DB connection and cursor. """
         # close cursor
         self.db.close()
         # close connection
         self.connection.close()
 
-    # search nthsubs
-    def search_nth_subs(self, number_gt=None, number_lt=None, number_eq=None, tags=None):
+    def search_nth_subs(self,
+                        number_gt: Optional[int] = None,
+                        number_lt: Optional[int] = None,
+                        number_eq: Optional[int] = None,
+                        tags: List[str] = None) -> Iterator[NthSub]:
+        """
+        Searches Nth subs in a database.
+        :param number_gt: the output subs' numbers must be greater than this
+        :param number_lt: the output subs' numbers must be less than this
+        :param number_eq: the output subs' numbers must be equal to this
+        :param tags: the output subs will have these tags
+        :returns the list of subs that fit the criteria
+        """
         # arguments handling
         if tags is None:
             tags = []
@@ -64,7 +86,10 @@ class DB:
         return map(nthsub_from_record, self.db)
 
 
-# create an nthsub from a DB record
-def nthsub_from_record(record):
+def nthsub_from_record(record: Tuple[str, str, str]) -> NthSub:
+    """
+    Creates an nthsub from a DB record.
+    :param record: the record that will be converted
+    """
     return NthSub(record[0][1:-1].split(' '), record[2], record[1])
 

@@ -1,13 +1,37 @@
+""" Automatically creates the config. """
 import getpass
 
 
-# automatically create the config
 def auto_create(source, keymaps):
+    """
+    Automatically creates the config.
+    :param source: source config, new keys will be added.
+    :param keymaps: the "key maps" for creating the config.
+    Key map example:
+        {
+           "name": "reddit features",
+           "type": "dict",
+           "keymaps": {
+               "username": {
+                   "name": "username",
+                   "type": "str"
+               }
+               "password": {
+                   "name": "reddit password",
+                   "type": "secret"
+               },
+               "version": {
+                   "name": "bot version",
+                   "default": 1,
+                   "type": "int"
+               }
+            }
+        }
+    """
     # output config
     target = {}
     # iterate every property in the source config
     for key, keymap in keymaps.items():
-        # get the key map for the property
         # example
         # {
         #   "name": "reddit features",

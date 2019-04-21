@@ -1,10 +1,12 @@
-import yaml  # YAML parsing
-import appdirs  # for getting the config directory
-import os  # for getting the config file path
+""" Contains the config reader """
+
+import yaml
+import appdirs
+import os
 
 
-# config file object
 class Config:
+    """ Config file object. """
     # get the config directory
     config_dir = appdirs.user_config_dir("nthsubbot")
     # get the config file path
@@ -13,6 +15,10 @@ class Config:
     # read config
     @classmethod
     def read(cls):
+        """
+        Read config.
+        :return: the config that was read
+        """
         try:
             # open the config file
             with open(cls.config_path, 'r') as config_file:
@@ -28,9 +34,12 @@ class Config:
             return {}
         return config
 
-    # saves the config
     @classmethod
     def save(cls, config):
+        """
+        Saves the config.
+        :param config: the config to save
+        """
         # open the config file
         with open(cls.config_path, 'w') as config_file:
             # save it
