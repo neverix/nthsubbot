@@ -2,6 +2,8 @@
 
 import praw
 from typing import Tuple, Dict
+import time
+from praw.exceptions import APIException
 
 
 class Reddit:
@@ -24,7 +26,7 @@ class Reddit:
         for post in me.submissions.new():
             post.delete()
 
-    def post_or_edit(self, subreddits_posts: Dict[str, Tuple[str, str]]) -> Dict[str, str]:
+    def post_or_edit(self, subreddits_posts: Dict[str, Tuple[str, str]], submit: bool = True) -> Dict[str, str]:
         """
         Create or edit a submission to particular subreddits.
         :param subreddits_posts: mapping from subreddit to title and text of the post
@@ -46,12 +48,34 @@ class Reddit:
                     subs_left.remove(subreddit)
                     # add the link
                     links[subreddit] = post.url
-        # loop over other subs
-        for subreddit in subs_left:
-            # get the title and text
-            title, text = subreddits_posts[subreddit]
-            # submit post
-            post = self.reddit.subreddit(subreddit).submit(title, text)
-            # add the link
-            links[subreddit] = post.url
+        # if the bot is configured to submit posts
+        if submit:
+            # loop over other subs
+            for subreddit in subs_left:
+                # get the title and text
+                title, text = subreddits_posts[subreddit]
+                # submit post
+                post = self.try_submit(subreddit, title, text)
+                # add the link
+                links[subreddit] = post.url
+                print(post.url)
         return links
+
+    def try_submit(self, sub: str, title: str, text: str):
+        """
+        Try to post in a given subreddit.
+        :param sub: the sub to post in
+        :param title: the title of the post
+        :param text: the text of the post
+        :return: the resulting post object
+        """
+        post = None
+        while True:
+            try:
+                post = self.reddit.subreddit(sub).submit(title, text)
+            except APIException as e:
+                print(f"r/{sub}", e)
+                time.sleep(60)
+                continue
+            break
+        return post
